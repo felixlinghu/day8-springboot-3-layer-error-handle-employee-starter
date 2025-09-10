@@ -23,4 +23,12 @@ private int id=1;
     companies.add(company);
     return company;
   }
+
+  public Company getCompanyById(int id) {
+    return companies.stream().filter(company -> company.getId()==id).findFirst().orElse(null);
+  }
+
+  public Company updateCompany(Company originCompany, Company updatedCompany) {
+    return updatedCompany;
+  }
 }

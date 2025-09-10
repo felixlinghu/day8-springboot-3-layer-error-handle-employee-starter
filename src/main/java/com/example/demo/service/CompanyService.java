@@ -5,7 +5,9 @@ import com.example.demo.repository.CompanyRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CompanyService {
@@ -31,5 +33,19 @@ public class CompanyService {
 
   public Company create(Company company) {
     return companyRepository.createCompany(company);
+  }
+
+  public Company updateCompany(int id, Company updatedCompany) {
+    Company found = companyRepository.getCompanyById(id);
+    if(found==null){
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found with id: " + id);}
+    return companyRepository.updateCompany(found,updatedCompany);
+  }
+
+  public Company getCompanyById(int id) {
+    Company found = companyRepository.getCompanyById(id);
+    if(found==null){
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found with id: " + id);}
+    return found;
   }
 }
