@@ -31,4 +31,8 @@ private int id=1;
   public Company updateCompany(Company originCompany, Company updatedCompany) {
     return updatedCompany;
   }
+
+  public void deleteCompany(Company found) {
+    companies.remove(found);
+  }
 }
