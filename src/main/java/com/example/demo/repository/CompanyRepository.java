@@ -12,6 +12,7 @@ public class CompanyRepository {
 private int id=1;
   public  void clear() {
     companies.clear();
+    id=1;
   }
 
   public List<Company> getAllCompanies() {
