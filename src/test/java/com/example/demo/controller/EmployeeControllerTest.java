@@ -147,14 +147,13 @@ void setUp() throws Exception {
                 .andExpect(jsonPath("$[0].salary").value(expect.getSalary()));
     }
 
-//    @Test
-//    void should_status_204_when_delete_employee() throws Exception {
-//        int id = employeeController.createEmployee(johnSmith()).getId();
-//
-//        mockMvc.perform(delete("/employees/" + id))
-//                .andExpect(status().isNoContent());
-//    }
-//
+    @Test
+    void should_status_204_when_delete_employee() throws Exception {
+        createEmployee("John Smith");
+        mockMvc.perform(delete("/employees/1" ))
+                .andExpect(status().isNoContent());
+    }
+
 //    @Test
 //    void should_status_200_when_update_employee() throws Exception {
 //        Employee expect = employeeController.createEmployee(johnSmith());
