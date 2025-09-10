@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Employee;
 import com.google.gson.Gson;
-import com.jayway.jsonpath.JsonPath;
+import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,7 +23,11 @@ public class EmployeeControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
+@BeforeEach
 
+void setUp() throws Exception {
+    mockMvc.perform(delete("/employees/clear"));
+}
   @Test
   void should_return_404_when_employee_not_found() throws Exception {
     mockMvc.perform(get("/employees/999")
@@ -32,35 +37,47 @@ public class EmployeeControllerTest {
 
   @Test
   void should_return_all_employee() throws Exception {
-    Gson gson = new Gson();
-    String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0)).toString();
-    String employee2 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0)).toString();
-    post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(employee1);
-    post("/employees")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(employee2);
+      createEmployee("John Smith");
+      createEmployee("Jane Doe");
     mockMvc.perform(get("/employees")
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2));
   }
-//
-//    @Test
-//    void should_return_employee_when_employee_found() throws Exception {
-//        Employee expect = employeeController.createEmployee(johnSmith());
-//
-//        mockMvc.perform(get("/employees/1")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(expect.getId()))
-//                .andExpect(jsonPath("$.name").value(expect.getName()))
-//                .andExpect(jsonPath("$.age").value(expect.getAge()))
-//                .andExpect(jsonPath("$.gender").value(expect.getGender()))
-//                .andExpect(jsonPath("$.salary").value(expect.getSalary()));
-//    }
-//
+
+    private Gson createEmployee(String name) throws Exception {
+        Gson gson = new Gson();
+        if(Objects.equals(name, "Jane Doe")){
+            String employee1 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0)).toString();
+            mockMvc.perform(post("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(employee1));
+            return gson;
+        }
+        String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0)).toString();
+        mockMvc.perform(post("/employees")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(employee1));
+        return gson;
+    }
+
+    @Test
+  void should_return_employee_when_employee_found() throws Exception {
+    Gson gson = new Gson();
+    Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
+    String employee1 = gson.toJson(expect).toString();
+        ResultActions actions = mockMvc.perform(post("/employees")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(employee1));
+        mockMvc.perform(get("/employees/1" )
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value(expect.getName()))
+        .andExpect(jsonPath("$.age").value(expect.getAge()))
+        .andExpect(jsonPath("$.gender").value(expect.getGender()))
+        .andExpect(jsonPath("$.salary").value(expect.getSalary()));
+  }
+
 //    @Test
 //    void should_return_male_employee_when_employee_found() throws Exception {
 //        Employee expect = employeeController.createEmployee(johnSmith());

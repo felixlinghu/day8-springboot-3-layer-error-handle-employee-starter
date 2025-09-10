@@ -15,6 +15,11 @@ import java.util.stream.Stream;
 public class EmployeeController {
     private final List<Employee> employees = new ArrayList<>();
 
+    @DeleteMapping("/clear")
+    public void clear(){
+        employees.clear();
+    }
+
     @GetMapping
     public List<Employee> getEmployees(@RequestParam(required = false) String gender, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
         Stream<Employee> stream = employees.stream();
