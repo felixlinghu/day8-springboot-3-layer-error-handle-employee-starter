@@ -1,0 +1,55 @@
+package com.example.demo.repository;
+
+import com.example.demo.entity.Employee;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class EmployeeRepository {
+  private final List<Employee> employees = new ArrayList<>();
+
+  public  Employee getEmployeeById(int id) {
+    return employees.stream()
+        .filter(employee -> employee.getId() == id)
+        .findFirst().orElse(null);
+  }
+
+  public void clear() {
+    employees.clear();
+  }
+
+  public List<Employee> getEmployees() {
+    return employees;
+  }
+
+  public Employee create(Employee employee) {
+    employee.setId(employees.size() + 1);
+    employees.add(employee);
+    return employee;
+  }
+
+  public Employee updateEmployeeById(int id, Employee updatedEmployee) {
+    Employee found = null;
+    for (Employee e : employees) {
+      if (Objects.equals(e.getId(), id)) {
+        found = e;
+        break;
+      }
+    }
+    if (found == null) {
+
+    }
+    found.setName(updatedEmployee.getName());
+    found.setAge(updatedEmployee.getAge());
+    found.setGender(updatedEmployee.getGender());
+    found.setSalary(updatedEmployee.getSalary());
+    return found;
+  }
+
+  public void deleteEmployeeById(int id) {
+    employees.removeIf(employee -> employee.getId()==id);
+  }
+}

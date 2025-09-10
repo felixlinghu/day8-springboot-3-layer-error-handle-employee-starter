@@ -1,9 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Employee;
-import java.util.ArrayList;
+import com.example.demo.repository.EmployeeRepository;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,14 +10,18 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EmployeeService {
-  private final List<Employee> employees = new ArrayList<>();
+  private final EmployeeRepository employeeRepository;
+
+  public EmployeeService(EmployeeRepository employeeRepository) {
+    this.employeeRepository = employeeRepository;
+  }
 
   public void clear() {
-    employees.clear();
+    employeeRepository.clear();
   }
 
   public List<Employee> getEmployees(String gender, Integer page, Integer size) {
-    Stream<Employee> stream = employees.stream();
+    Stream<Employee> stream = employeeRepository.getEmployees().stream();
     if (gender != null) {
       stream = stream.filter(employee -> employee.getGender().compareToIgnoreCase(gender) == 0);
     }
@@ -28,48 +31,31 @@ public class EmployeeService {
     return stream.toList();
   }
 
-  public Employee getEmployeeById(int id) {
-    return employees.stream()
-        .filter(employee -> employee.getId() == id)
-        .findFirst()
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id));
-  }
-
-  public Employee createEmployee(Employee employee) {
-    employee.setId(employees.size() + 1);
-    employees.add(employee);
+  public Employee getEmployeeById(int id) throws ResponseStatusException {
+    Employee employee=employeeRepository.getEmployeeById(id);
+   if(employee==null) {
+     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
+   }
     return employee;
   }
 
-  public Employee updateEmployee(int id, Employee updatedEmployee) {
-    Employee found = null;
-    for (Employee e : employees) {
-      if (Objects.equals(e.getId(), id)) {
-        found = e;
-        break;
-      }
-    }
-    if (found == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
-    }
-    found.setName(updatedEmployee.getName());
-    found.setAge(updatedEmployee.getAge());
-    found.setGender(updatedEmployee.getGender());
-    found.setSalary(updatedEmployee.getSalary());
-    return found;
+  public Employee createEmployee(Employee employee) {
+
+    return  employeeRepository.create(employee);
   }
 
-  public void deleteEmployee(int id) {
-    Employee found = null;
-    for (Employee e : employees) {
-      if (e.getId() == id) {
-        found = e;
-        break;
-      }
-    }
-    if (found == null) {
+  public Employee updateEmployeeById(int id, Employee updatedEmployee) {
+    if(employeeRepository.getEmployeeById(id)==null){
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
     }
-    employees.remove(found);
+   return employeeRepository.updateEmployeeById(id,updatedEmployee);
+
+  }
+
+  public void deleteEmployeeById(int id) {
+    if(employeeRepository.getEmployeeById(id)==null){
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
+    }
+    employeeRepository.deleteEmployeeById(id);
   }
 }
