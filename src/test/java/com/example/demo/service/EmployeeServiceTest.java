@@ -90,7 +90,6 @@ class EmployeeServiceTest {
     employeeService.deleteEmployeeById(employee.getId());
     //then
     verify(employee).setActive(false);
-    verify(repository).deleteEmployeeById(employee.getId());
   }
 
 
