@@ -23,11 +23,11 @@ public class EmployeeControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
-@BeforeEach
-
-void setUp() throws Exception {
+  @BeforeEach
+  void setUp() throws Exception {
     mockMvc.perform(delete("/employees/clear"));
-}
+  }
+
   @Test
   void should_return_404_when_employee_not_found() throws Exception {
     mockMvc.perform(get("/employees/999")
@@ -37,39 +37,39 @@ void setUp() throws Exception {
 
   @Test
   void should_return_all_employee() throws Exception {
-      createEmployee("John Smith");
-      createEmployee("Jane Doe");
+    createEmployee("John Smith");
+    createEmployee("Jane Doe");
     mockMvc.perform(get("/employees")
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2));
   }
 
-    private Gson createEmployee(String name) throws Exception {
-        Gson gson = new Gson();
-        if(Objects.equals(name, "Jane Doe")){
-            String employee1 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0)).toString();
-            mockMvc.perform(post("/employees")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(employee1));
-            return gson;
-        }
-        String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0)).toString();
-        mockMvc.perform(post("/employees")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(employee1));
-        return gson;
+  private Gson createEmployee(String name) throws Exception {
+    Gson gson = new Gson();
+    if (Objects.equals(name, "Jane Doe")) {
+      String employee1 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0)).toString();
+      mockMvc.perform(post("/employees")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(employee1));
+      return gson;
     }
+    String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0)).toString();
+    mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(employee1));
+    return gson;
+  }
 
-    @Test
+  @Test
   void should_return_employee_when_employee_found() throws Exception {
     Gson gson = new Gson();
     Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
     String employee1 = gson.toJson(expect).toString();
-        ResultActions actions = mockMvc.perform(post("/employees")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(employee1));
-        mockMvc.perform(get("/employees/1" )
+    ResultActions actions = mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(employee1));
+    mockMvc.perform(get("/employees/1")
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value(expect.getName()))
@@ -78,116 +78,116 @@ void setUp() throws Exception {
         .andExpect(jsonPath("$.salary").value(expect.getSalary()));
   }
 
-    @Test
-    void should_return_male_employee_when_employee_found() throws Exception {
-        Gson gson = new Gson();
-        Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
-        String employee1 = gson.toJson(expect).toString();
-        ResultActions actions = mockMvc.perform(post("/employees")
+  @Test
+  void should_return_male_employee_when_employee_found() throws Exception {
+    Gson gson = new Gson();
+    Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
+    String employee1 = gson.toJson(expect).toString();
+    ResultActions actions = mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(employee1));
+
+    mockMvc.perform(get("/employees?gender=male")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].name").value(expect.getName()))
+        .andExpect(jsonPath("$[0].age").value(expect.getAge()))
+        .andExpect(jsonPath("$[0].gender").value(expect.getGender()))
+        .andExpect(jsonPath("$[0].salary").value(expect.getSalary()));
+  }
+
+  @Test
+  void should_create_employee() throws Exception {
+    String requestBody = """
+                {
+                    "name": "John Smith",
+                    "age": 28,
+                    "gender": "MALE",
+                    "salary": 60000
+                }
+        """;
+
+    mockMvc.perform(post("/employees")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(employee1));
+            .content(requestBody))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").isNumber())
+        .andExpect(jsonPath("$.name").value("John Smith"))
+        .andExpect(jsonPath("$.age").value(28))
+        .andExpect(jsonPath("$.gender").value("MALE"))
+        .andExpect(jsonPath("$.salary").value(60000));
+  }
 
-        mockMvc.perform(get("/employees?gender=male")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value(expect.getName()))
-                .andExpect(jsonPath("$[0].age").value(expect.getAge()))
-                .andExpect(jsonPath("$[0].gender").value(expect.getGender()))
-                .andExpect(jsonPath("$[0].salary").value(expect.getSalary()));
-    }
-
-    @Test
-    void should_create_employee() throws Exception {
-        String requestBody = """
-                        {
-                            "name": "John Smith",
-                            "age": 28,
-                            "gender": "MALE",
-                            "salary": 60000
-                        }
-                """;
-
-        mockMvc.perform(post("/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.name").value("John Smith"))
-                .andExpect(jsonPath("$.age").value(28))
-                .andExpect(jsonPath("$.gender").value("MALE"))
-                .andExpect(jsonPath("$.salary").value(60000));
-    }
-
-    @Test
-    void should_return_200_with_empty_body_when_no_employee() throws Exception {
-        mockMvc.perform(get("/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
-    }
-
-    @Test
-    void should_return_200_with_employee_list() throws Exception {
-        Gson gson = new Gson();
-        Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
-        String employee1 = gson.toJson(expect).toString();
-        ResultActions actions = mockMvc.perform(post("/employees")
+  @Test
+  void should_return_200_with_empty_body_when_no_employee() throws Exception {
+    mockMvc.perform(get("/employees")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(employee1));
-        mockMvc.perform(get("/employees")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].name").value(expect.getName()))
-                .andExpect(jsonPath("$[0].age").value(expect.getAge()))
-                .andExpect(jsonPath("$[0].gender").value(expect.getGender()))
-                .andExpect(jsonPath("$[0].salary").value(expect.getSalary()));
-    }
+            .content("{}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isEmpty());
+  }
 
-    @Test
-    void should_status_204_when_delete_employee() throws Exception {
-        createEmployee("John Smith");
-        mockMvc.perform(delete("/employees/1" ))
-                .andExpect(status().isNoContent());
-    }
+  @Test
+  void should_return_200_with_employee_list() throws Exception {
+    Gson gson = new Gson();
+    Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
+    String employee1 = gson.toJson(expect).toString();
+    ResultActions actions = mockMvc.perform(post("/employees")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(employee1));
+    mockMvc.perform(get("/employees")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].name").value(expect.getName()))
+        .andExpect(jsonPath("$[0].age").value(expect.getAge()))
+        .andExpect(jsonPath("$[0].gender").value(expect.getGender()))
+        .andExpect(jsonPath("$[0].salary").value(expect.getSalary()));
+  }
 
-    @Test
-    void should_status_200_when_update_employee() throws Exception {
+  @Test
+  void should_status_204_when_delete_employee() throws Exception {
     createEmployee("John Smith");
-        String requestBody = """
-                        {
-                            "name": "John Smith",
-                            "age": 29,
-                            "gender": "MALE",
-                            "salary": 65000.0
-                        }
-                """;
+    mockMvc.perform(delete("/employees/1"))
+        .andExpect(status().isNoContent());
+  }
 
-        mockMvc.perform(put("/employees/1" )
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.age").value(29))
-                .andExpect(jsonPath("$.salary").value(65000.0));
-    }
+  @Test
+  void should_status_200_when_update_employee() throws Exception {
+    createEmployee("John Smith");
+    String requestBody = """
+                {
+                    "name": "John Smith",
+                    "age": 29,
+                    "gender": "MALE",
+                    "salary": 65000.0
+                }
+        """;
 
-    @Test
-    void should_status_200_and_return_paged_employee_list() throws Exception {
-        createEmployee("John Smith");
-        createEmployee("Jane Doe");
-        createEmployee("Jane Doe");
-        createEmployee("Jane Doe");
-        createEmployee("Jane Doe");
-        createEmployee("Jane Doe");
-        
-        mockMvc.perform(get("/employees?page=1&size=5")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(5));
-    }
+    mockMvc.perform(put("/employees/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.age").value(29))
+        .andExpect(jsonPath("$.salary").value(65000.0));
+  }
+
+  @Test
+  void should_status_200_and_return_paged_employee_list() throws Exception {
+    createEmployee("John Smith");
+    createEmployee("Jane Doe");
+    createEmployee("Jane Doe");
+    createEmployee("Jane Doe");
+    createEmployee("Jane Doe");
+    createEmployee("Jane Doe");
+
+    mockMvc.perform(get("/employees?page=1&size=5")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(5));
+  }
 }
