@@ -12,44 +12,46 @@ import java.util.List;
 @RestController
 @RequestMapping("/companies")
 public class CompanyController {
-    private final CompanyService companyService;
+
+  private final CompanyService companyService;
 
 
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
-    @DeleteMapping("/clear")
-    public void clear(){
-        companyService.clear();
-    }
+  public CompanyController(CompanyService companyService) {
+    this.companyService = companyService;
+  }
 
-    @GetMapping
-    public List<Company> getCompanies(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
-       return companyService.getCompanies(page,size);
-    }
+  @DeleteMapping("/clear")
+  public void clear() {
+    companyService.clear();
+  }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Company createCompany(@RequestBody Company company) {
-        return companyService.create(company);
+  @GetMapping
+  public List<Company> getCompanies(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+    return companyService.getCompanies(page, size);
+  }
 
-    }
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public Company createCompany(@RequestBody Company company) {
+    return companyService.create(company);
 
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Company updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidCompanyIdException {
-       return companyService.updateCompany(id,updatedCompany);
-    }
+  }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Company getCompanyById(@PathVariable int id) throws InvalidCompanyIdException {
-       return companyService.getCompanyById(id);
-    }
+  @PutMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public Company updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidCompanyIdException {
+    return companyService.updateCompany(id, updatedCompany);
+  }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCompany(@PathVariable int id) throws InvalidCompanyIdException {
-       companyService.deleteCompany(id);
-    }
+  @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public Company getCompanyById(@PathVariable int id) throws InvalidCompanyIdException {
+    return companyService.getCompanyById(id);
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteCompany(@PathVariable int id) throws InvalidCompanyIdException {
+    companyService.deleteCompany(id);
+  }
 }

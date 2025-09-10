@@ -57,7 +57,7 @@ public class CompanyService {
     return found;
   }
 
-  public void deleteCompany(int id) throws  InvalidCompanyIdException {
+  public void deleteCompany(int id) throws InvalidCompanyIdException {
     Company found = companyRepository.getCompanyById(id);
     if (found == null) {
       throw new InvalidCompanyIdException("Company not found with id: " + id);

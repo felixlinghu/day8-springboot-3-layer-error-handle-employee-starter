@@ -8,11 +8,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class CompanyRepository {
+
   private final List<Company> companies = new ArrayList<>();
-private int id=1;
-  public  void clear() {
+  private int id = 1;
+
+  public void clear() {
     companies.clear();
-    id=1;
+    id = 1;
   }
 
   public List<Company> getAllCompanies() {
@@ -26,7 +28,7 @@ private int id=1;
   }
 
   public Company getCompanyById(int id) {
-    return companies.stream().filter(company -> company.getId()==id).findFirst().orElse(null);
+    return companies.stream().filter(company -> company.getId() == id).findFirst().orElse(null);
   }
 
   public Company updateCompany(Company originCompany, Company updatedCompany) {
