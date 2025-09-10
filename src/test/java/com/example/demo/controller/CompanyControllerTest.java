@@ -25,7 +25,7 @@ public class CompanyControllerTest {
 
     @BeforeEach
     void cleanCompanies() {
-        companyController.empty();
+        companyController.clear();
     }
 
     @Test
