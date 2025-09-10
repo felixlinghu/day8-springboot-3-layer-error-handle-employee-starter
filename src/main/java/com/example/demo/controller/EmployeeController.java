@@ -84,7 +84,4 @@ public class EmployeeController {
         employees.remove(found);
     }
 
-    public void empty() {
-        employees.clear();
-    }
 }
