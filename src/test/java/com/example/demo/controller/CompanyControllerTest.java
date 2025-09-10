@@ -24,7 +24,7 @@ public class CompanyControllerTest {
 
   @BeforeEach
   void cleanCompanies() throws Exception {
-    mockMvc.perform(get("/companies/clear"));
+    mockMvc.perform(delete("/companies/clear"));
   }
 
   @Test
@@ -35,8 +35,8 @@ public class CompanyControllerTest {
         }
         """;
     mockMvc.perform(post("/companies")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.name").value("Spring"));
@@ -77,7 +77,7 @@ public class CompanyControllerTest {
 
   @Test
   void should_return_company_when_put_with_id_found() throws Exception {
-      String requestBody = """
+    String requestBody = """
         {
             "name": "Spring"
         }
@@ -87,12 +87,13 @@ public class CompanyControllerTest {
         .content(requestBody));
     String requestBody1 = """
         {
+        "id":1,
             "name": "Spring2"
         }
         """;
-    mockMvc.perform(put("/companies/" +1)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(requestBody1))
+    mockMvc.perform(put("/companies/" + 1)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody1))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.name").value("Spring2"));
@@ -100,7 +101,7 @@ public class CompanyControllerTest {
 
   @Test
   void should_return_no_content_when_delete_id_found() throws Exception {
-      String requestBody = """
+    String requestBody = """
         {
             "name": "Spring"
         }
@@ -117,17 +118,17 @@ public class CompanyControllerTest {
 
   @Test
   void should_return_truncated_companies_when_page_size_is_limit() throws Exception {
-      String requestBody = """
+    String requestBody = """
         {
             "name": "Spring"
         }
         """;
-      for (int i = 0; i < 10; i++) {
-          MockHttpServletRequestBuilder postRequest = post("/companies")
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(requestBody);
-          mockMvc.perform(postRequest); // Ensure each company is created
-      }
+    for (int i = 0; i < 10; i++) {
+      MockHttpServletRequestBuilder postRequest = post("/companies")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(requestBody);
+      mockMvc.perform(postRequest); // Ensure each company is created
+    }
     MockHttpServletRequestBuilder request = get("/companies?page=1&size=5")
         .contentType(MediaType.APPLICATION_JSON);
 

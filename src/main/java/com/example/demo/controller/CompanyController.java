@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Company;
+import com.example.demo.exception.InvalidCompanyIdException;
 import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.service.CompanyService;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,8 @@ public class CompanyController {
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
-@GetMapping("/clear")
-    public void clear() {
+    @DeleteMapping("/clear")
+    public void clear(){
         companyService.clear();
     }
 
@@ -36,19 +37,19 @@ public class CompanyController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Company updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidDataMessageException {
+    public Company updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidCompanyIdException {
        return companyService.updateCompany(id,updatedCompany);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Company getCompanyById(@PathVariable int id) throws InvalidDataMessageException {
+    public Company getCompanyById(@PathVariable int id) throws InvalidCompanyIdException {
        return companyService.getCompanyById(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCompany(@PathVariable int id) throws InvalidDataMessageException {
+    public void deleteCompany(@PathVariable int id) throws InvalidCompanyIdException {
        companyService.deleteCompany(id);
     }
 }

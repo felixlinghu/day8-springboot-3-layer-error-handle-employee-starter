@@ -19,4 +19,9 @@ public class GlobalExceptionHandler {
   public ResponseException invalidDataExceptionHandler(Exception exception) {
     return new ResponseException(exception.getMessage());
   }
+  @ExceptionHandler(InvalidCompanyIdException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ResponseException InvalidCompanyIdExceptionHandler(Exception exception) {
+    return new ResponseException(exception.getMessage());
+  }
 }
