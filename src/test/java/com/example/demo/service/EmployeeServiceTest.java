@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -106,10 +107,15 @@ class EmployeeServiceTest {
     employee.setActive(false);
 //    doNothing().when(employeeService).getEmployeeById(any());
     //when
+    try{
     Employee updateEmployee = employeeService.updateEmployeeById(employee.getId(), employee);
+    fail();
+    }
     //then
-    verify(repository, never()).updateEmployeeById(employee.getId(), employee);
-    assertNull(updateEmployee);
+    catch (Exception e){
+      verify(repository, never()).updateEmployeeById(employee.getId(), employee);
+    }
+
   }
 
 }

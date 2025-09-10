@@ -62,7 +62,7 @@ public class EmployeeService {
     if (employee.isActive()) {
       return employeeRepository.updateEmployeeById(id, updatedEmployee);
     }
-    return null;
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
 
   }
 
