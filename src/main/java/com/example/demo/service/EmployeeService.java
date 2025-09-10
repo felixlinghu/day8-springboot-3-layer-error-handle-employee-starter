@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Employee;
+import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.repository.EmployeeRepository;
 import java.util.List;
 import java.util.stream.Stream;
@@ -48,28 +49,28 @@ public class EmployeeService {
     }
     if (employee.getAge() > 30 && (employee.getSalary() == null || employee.getSalary() < 20000)) {
 //      throw new RuntimeException("salary is invalid");
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "salary is invalid");
+      throw new InvalidDataMessageException( "salary is invalid" );
     }
     employee.setActive(true);
     return employeeRepository.create(employee);
   }
 
-  public Employee updateEmployeeById(int id, Employee updatedEmployee) {
+  public Employee updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
     Employee employee = employeeRepository.getEmployeeById(id);
     if (employee == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
+      throw new InvalidDataMessageException( "Employee not found with id: " + id);
     }
     if (employee.isActive()) {
       return employeeRepository.updateEmployeeById(id, updatedEmployee);
     }
-    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
+    throw new InvalidDataMessageException( "Employee not found with id: " + id);
 
   }
 
-  public void deleteEmployeeById(int id) {
+  public void deleteEmployeeById(int id) throws InvalidDataMessageException {
     Employee employee = employeeRepository.getEmployeeById(id);
     if (employee == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
+      throw new InvalidDataMessageException( "Employee not found with id: " + id);
     }
     employee.setActive(false);
     employeeRepository.updateEmployeeById(employee.getId(),employee);

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Company;
+import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.repository.CompanyRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CompanyService {
-@Autowired
+
+  @Autowired
   private CompanyRepository companyRepository;
 
   public void clear() {
@@ -19,7 +21,7 @@ public class CompanyService {
   }
 
   public List<Company> getCompanies(Integer page, Integer size) {
-    List<Company> companies=companyRepository.getAllCompanies();
+    List<Company> companies = companyRepository.getAllCompanies();
     if (page != null && size != null) {
       int start = (page - 1) * size;
       int end = Math.min(start + size, companies.size());
@@ -35,24 +37,27 @@ public class CompanyService {
     return companyRepository.createCompany(company);
   }
 
-  public Company updateCompany(int id, Company updatedCompany) {
+  public Company updateCompany(int id, Company updatedCompany) throws InvalidDataMessageException {
     Company found = companyRepository.getCompanyById(id);
-    if(found==null){
-    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found with id: " + id);}
-    return companyRepository.updateCompany(found,updatedCompany);
+    if (found == null) {
+      throw new InvalidDataMessageException("Company not found with id: " + id);
+    }
+    return companyRepository.updateCompany(found, updatedCompany);
   }
 
-  public Company getCompanyById(int id) {
+  public Company getCompanyById(int id) throws InvalidDataMessageException {
     Company found = companyRepository.getCompanyById(id);
-    if(found==null){
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found with id: " + id);}
+    if (found == null) {
+      throw new InvalidDataMessageException("Company not found with id: " + id);
+    }
     return found;
   }
 
-  public void deleteCompany(int id) {
+  public void deleteCompany(int id) throws InvalidDataMessageException {
     Company found = companyRepository.getCompanyById(id);
-    if(found==null){
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found with id: " + id);}
+    if (found == null) {
+      throw new InvalidDataMessageException("Company not found with id: " + id);
+    }
     companyRepository.deleteCompany(found);
   }
 }

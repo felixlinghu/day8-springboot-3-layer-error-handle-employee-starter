@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Employee;
+import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +41,13 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee updateEmployee(@PathVariable int id, @RequestBody Employee updatedEmployee) {
+    public Employee updateEmployee(@PathVariable int id, @RequestBody Employee updatedEmployee) throws InvalidDataMessageException {
        return employeeService.updateEmployeeById(id, updatedEmployee);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEmployee(@PathVariable int id) {
+    public void deleteEmployee(@PathVariable int id) throws InvalidDataMessageException {
       employeeService.deleteEmployeeById(id);
     }
 

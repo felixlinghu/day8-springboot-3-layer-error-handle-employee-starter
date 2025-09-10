@@ -17,131 +17,146 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CompanyControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
 
-    @Autowired
-    private CompanyController companyController;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @BeforeEach
-    void cleanCompanies() {
-        companyController.clear();
-    }
 
-    @Test
-    void should_return_created_company_when_post_companies() throws Exception {
-        String requestBody = """
-                {
-                    "name": "Spring"
-                }
-                """;
-        MockHttpServletRequestBuilder request = post("/companies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody);
+  @BeforeEach
+  void cleanCompanies() throws Exception {
+    mockMvc.perform(get("/companies/clear"));
+  }
 
-        mockMvc.perform(request)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Spring"));
-    }
+  @Test
+  void should_return_created_company_when_post_companies() throws Exception {
+    String requestBody = """
+        {
+            "name": "Spring"
+        }
+        """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("Spring"));
+  }
 
-    @Test
-    void should_return_all_companies_when_no_param() throws Exception {
-        Company spring = new Company();
-        spring.setName("Spring");
-        companyController.createCompany(spring);
+  @Test
+  void should_return_all_companies_when_no_param() throws Exception {
+    String requestBody = """
+        {
+            "name": "Spring"
+        }
+        """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
+    mockMvc.perform(get("/companies").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1));
+  }
 
-        mockMvc.perform(get("/companies").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
-    }
+  @Test
+  void should_return_company_when_get_id_found() throws Exception {
+    String requestBody = """
+        {
+            "name": "Spring"
+        }
+        """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
+    MockHttpServletRequestBuilder request = get("/companies/" + 1)
+        .contentType(MediaType.APPLICATION_JSON);
+    mockMvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("Spring"));
+  }
 
-    @Test
-    void should_return_company_when_get_id_found() throws Exception {
-        Company spring = new Company();
-        spring.setName("Spring");
-        Company company = companyController.createCompany(spring);
+  @Test
+  void should_return_company_when_put_with_id_found() throws Exception {
+      String requestBody = """
+        {
+            "name": "Spring"
+        }
+        """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
+    String requestBody1 = """
+        {
+            "name": "Spring2"
+        }
+        """;
+    mockMvc.perform(put("/companies/" +1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody1))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("Spring2"));
+  }
 
-        MockHttpServletRequestBuilder request = get("/companies/" + company.getId())
-                .contentType(MediaType.APPLICATION_JSON);
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(company.getId()))
-                .andExpect(jsonPath("$.name").value(company.getName()));
-    }
+  @Test
+  void should_return_no_content_when_delete_id_found() throws Exception {
+      String requestBody = """
+        {
+            "name": "Spring"
+        }
+        """;
+    mockMvc.perform(post("/companies")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody));
+    MockHttpServletRequestBuilder request = delete("/companies/" + 1)
+        .contentType(MediaType.APPLICATION_JSON);
 
-    @Test
-    void should_return_company_when_put_with_id_found() throws Exception {
-        Company spring = new Company();
-        spring.setName("Spring");
-        Company company = companyController.createCompany(spring);
-        String requestBody = """
-                {
-                    "name": "Spring2"
-                }
-                """;
-        MockHttpServletRequestBuilder request = put("/companies/" + company.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody);
+    mockMvc.perform(request)
+        .andExpect(status().isNoContent());
+  }
 
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(company.getId()))
-                .andExpect(jsonPath("$.name").value("Spring2"));
-    }
+  @Test
+  void should_return_truncated_companies_when_page_size_is_limit() throws Exception {
+      String requestBody = """
+        {
+            "name": "Spring"
+        }
+        """;
+      for (int i = 0; i < 10; i++) {
+          MockHttpServletRequestBuilder postRequest = post("/companies")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(requestBody);
+          mockMvc.perform(postRequest); // Ensure each company is created
+      }
+    MockHttpServletRequestBuilder request = get("/companies?page=1&size=5")
+        .contentType(MediaType.APPLICATION_JSON);
 
-    @Test
-    void should_return_no_content_when_delete_id_found() throws Exception {
-        Company spring = new Company();
-        spring.setName("Spring");
-        Company company = companyController.createCompany(spring);
+    mockMvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(5));
+  }
 
-        MockHttpServletRequestBuilder request = delete("/companies/" + company.getId())
-                .contentType(MediaType.APPLICATION_JSON);
+  @Test
+  void should_status_404_when_get_company_by_id_not_found() throws Exception {
+    MockHttpServletRequestBuilder request = get("/companies/999")
+        .contentType(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(request)
-                .andExpect(status().isNoContent());
-    }
+    mockMvc.perform(request)
+        .andExpect(status().isNotFound());
+  }
 
-    @Test
-    void should_return_truncated_companies_when_page_size_is_limit() throws Exception {
-        Company spring = new Company();
-        spring.setName("Spring");
-        companyController.createCompany(spring);
-        companyController.createCompany(spring);
-        companyController.createCompany(spring);
-        companyController.createCompany(spring);
-        companyController.createCompany(spring);
-        companyController.createCompany(spring);
-        MockHttpServletRequestBuilder request = get("/companies?page=1&size=5")
-                .contentType(MediaType.APPLICATION_JSON);
+  @Test
+  void should_status_404_when_put_company_by_id_not_found() throws Exception {
+    String requestBody = """
+        {
+            "name": "Spring2"
+        }
+        """;
+    MockHttpServletRequestBuilder request = put("/companies/999")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(requestBody);
 
-        mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(5));
-    }
-
-    @Test
-    void should_status_404_when_get_company_by_id_not_found() throws Exception {
-        MockHttpServletRequestBuilder request = get("/companies/999")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        mockMvc.perform(request)
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void should_status_404_when_put_company_by_id_not_found() throws Exception {
-        String requestBody = """
-                {
-                    "name": "Spring2"
-                }
-                """;
-        MockHttpServletRequestBuilder request = put("/companies/999")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody);
-
-        mockMvc.perform(request)
-                .andExpect(status().isNotFound());
-    }
+    mockMvc.perform(request)
+        .andExpect(status().isNotFound());
+  }
 }
