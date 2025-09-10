@@ -47,7 +47,8 @@ public class EmployeeService {
       throw new Exception("age is invalid");
     }
     if (employee.getAge() > 30 && (employee.getSalary() == null || employee.getSalary() < 20000)) {
-      throw new Exception("salary is invalid");
+//      throw new RuntimeException("salary is invalid");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "salary is invalid");
     }
     employee.setActive(true);
     return employeeRepository.create(employee);

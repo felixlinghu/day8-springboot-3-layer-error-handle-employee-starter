@@ -190,4 +190,77 @@ public class EmployeeControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(5));
   }
+
+  @Test
+  void should_not_create_employee_when_employee_invalid() throws Exception {
+    String requestBody = """
+                {
+                    "name": "John Smith",
+                    "age": 38,
+                    "gender": "MALE",
+                    "salary": 600
+                }
+        """;
+
+    mockMvc.perform(post("/employees")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
+        .andExpect(status().is4xxClientError());
+  }
+
+  @Test
+  void should_create_employee_with_active_is_true() throws Exception {
+    String requestBody = """
+                {
+                    "name": "John Smith",
+                    "age": 28,
+                    "gender": "MALE",
+                    "salary": 60000
+                }
+        """;
+
+    mockMvc.perform(post("/employees")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").isNumber())
+        .andExpect(jsonPath("$.name").value("John Smith"))
+        .andExpect(jsonPath("$.age").value(28))
+        .andExpect(jsonPath("$.gender").value("MALE"))
+        .andExpect(jsonPath("$.salary").value(60000))
+        .andExpect(jsonPath("$.active").value(true));
+
+  }
+
+  @Test
+  void should_return_active_false_when_delete_employee() throws Exception {
+    createEmployee("John Smith");
+    mockMvc.perform(delete("/employees/1"))
+        .andExpect(status().isNoContent());
+    mockMvc.perform(get("/employees/1"))
+        .andExpect(jsonPath("$.active").value(false));
+  }
+
+  @Test
+  void should_update_when_update_employee_with_status_true() throws Exception {
+    createEmployee("John Smith");
+    String requestBody = """
+                {
+                    "name": "John Smith",
+                    "age": 29,
+                    "gender": "MALE",
+                    "salary": 65000.0
+                }
+        """;
+
+    mockMvc.perform(put("/employees/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.age").value(29))
+        .andExpect(jsonPath("$.salary").value(65000.0))
+        .andExpect(jsonPath("$.active").value(true));
+  }
 }

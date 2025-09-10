@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,10 +30,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
 
-  @Mock
+  @Spy
   private EmployeeRepository employeeRepository;
   @InjectMocks
   private EmployeeService employeeService;
+
 
   @Test
   void should_throw_exception_when_age_is_larger_65_or_smaller_18() throws Exception {
@@ -101,6 +104,7 @@ class EmployeeServiceTest {
     EmployeeService employeeService = new EmployeeService(repository);
     employee = employeeService.createEmployee(employee);
     employee.setActive(false);
+//    doNothing().when(employeeService).getEmployeeById(any());
     //when
     Employee updateEmployee = employeeService.updateEmployeeById(employee.getId(), employee);
     //then
