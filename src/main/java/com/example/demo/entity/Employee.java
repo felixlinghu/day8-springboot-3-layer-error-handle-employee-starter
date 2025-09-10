@@ -6,12 +6,22 @@ public class Employee {
     private Integer age;
     private String gender;
     private Double salary;
+    private boolean active=true;
     public Integer getId() {
         return id;
     }
     public String getName() {
         return name;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public Integer getAge() {
         return age;
     }

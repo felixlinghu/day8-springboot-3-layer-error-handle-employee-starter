@@ -32,16 +32,7 @@ public class EmployeeRepository {
   }
 
   public Employee updateEmployeeById(int id, Employee updatedEmployee) {
-    Employee found = null;
-    for (Employee e : employees) {
-      if (Objects.equals(e.getId(), id)) {
-        found = e;
-        break;
-      }
-    }
-    if (found == null) {
-
-    }
+    Employee found = getEmployeeById(id);
     found.setName(updatedEmployee.getName());
     found.setAge(updatedEmployee.getAge());
     found.setGender(updatedEmployee.getGender());

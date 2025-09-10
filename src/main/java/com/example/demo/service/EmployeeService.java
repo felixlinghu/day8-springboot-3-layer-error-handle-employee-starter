@@ -4,20 +4,23 @@ import com.example.demo.entity.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import java.util.List;
 import java.util.stream.Stream;
+import jdk.jfr.DataAmount;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EmployeeService {
-  private final EmployeeRepository employeeRepository;
 
-  public EmployeeService(EmployeeRepository employeeRepository) {
-    this.employeeRepository = employeeRepository;
-  }
+  private final EmployeeRepository employeeRepository;
 
   public void clear() {
     employeeRepository.clear();
+  }
+
+  public EmployeeService(EmployeeRepository employeeRepository) {
+    this.employeeRepository = employeeRepository;
   }
 
   public List<Employee> getEmployees(String gender, Integer page, Integer size) {
@@ -32,30 +35,42 @@ public class EmployeeService {
   }
 
   public Employee getEmployeeById(int id) throws ResponseStatusException {
-    Employee employee=employeeRepository.getEmployeeById(id);
-   if(employee==null) {
-     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
-   }
+    Employee employee = employeeRepository.getEmployeeById(id);
+    if (employee == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
+    }
     return employee;
   }
 
-  public Employee createEmployee(Employee employee) {
-
-    return  employeeRepository.create(employee);
+  public Employee createEmployee(Employee employee) throws Exception {
+    if (employee.getAge() > 65 || employee.getAge() < 18) {
+      throw new Exception("age is invalid");
+    }
+    if (employee.getAge() > 30 && (employee.getSalary() == null || employee.getSalary() < 20000)) {
+      throw new Exception("salary is invalid");
+    }
+    employee.setActive(true);
+    return employeeRepository.create(employee);
   }
 
   public Employee updateEmployeeById(int id, Employee updatedEmployee) {
-    if(employeeRepository.getEmployeeById(id)==null){
+    Employee employee = employeeRepository.getEmployeeById(id);
+    if (employee == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
     }
-   return employeeRepository.updateEmployeeById(id,updatedEmployee);
+    if (employee.isActive()) {
+      return employeeRepository.updateEmployeeById(id, updatedEmployee);
+    }
+    return null;
 
   }
 
   public void deleteEmployeeById(int id) {
-    if(employeeRepository.getEmployeeById(id)==null){
+    Employee employee = employeeRepository.getEmployeeById(id);
+    if (employee == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
     }
+    employee.setActive(false);
     employeeRepository.deleteEmployeeById(id);
   }
 }
