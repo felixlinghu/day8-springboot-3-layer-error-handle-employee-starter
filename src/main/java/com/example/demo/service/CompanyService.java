@@ -28,4 +28,8 @@ public class CompanyService {
     }
     return companies;
   }
+
+  public Company create(Company company) {
+    return companyRepository.createCompany(company);
+  }
 }

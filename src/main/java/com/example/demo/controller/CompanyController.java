@@ -32,9 +32,8 @@ public class CompanyController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Company createCompany(@RequestBody Company company) {
-        company.setId(1);
-        companies.add(company);
-        return company;
+        return companyService.create(company);
+
     }
 
     @PutMapping("/{id}")
