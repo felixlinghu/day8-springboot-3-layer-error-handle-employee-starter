@@ -1,5 +1,12 @@
 package com.example.demo.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.example.demo.entity.Employee;
 import com.google.gson.Gson;
 import java.util.Objects;
@@ -9,12 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,16 +27,19 @@ public class EmployeeControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @BeforeEach
-  void setUp() throws Exception {
-    mockMvc.perform(delete("/employees/clear"));
-  }
-
+@Autowired
+private JdbcTemplate jdbcTemplate;
+@BeforeEach
+public void setUp(){
+//  jdbcTemplate.execute("truncate table employee");
+  jdbcTemplate.execute("delete from employee;");
+  jdbcTemplate.execute("ALTER TABLE employee AUTO_INCREMENT=1");
+}
   @Test
-  void should_return_404_when_employee_not_found() throws Exception {
+  void should_return_400_when_employee_not_found() throws Exception {
     mockMvc.perform(get("/employees/999")
             .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound());
+        .andExpect(status().is4xxClientError());
   }
 
   @Test

@@ -14,9 +14,6 @@ public class EmployeeService {
 
   private final IEmployeeRepository employeeRepository;
 
-  public void clear() {
-    employeeRepository.flush();
-  }
 
   public EmployeeService(IEmployeeRepository employeeRepository) {
     this.employeeRepository = employeeRepository;

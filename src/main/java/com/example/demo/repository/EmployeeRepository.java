@@ -2,9 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.entity.Employee;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -17,9 +15,6 @@ public class EmployeeRepository {
         .findFirst().orElse(null);
   }
 
-  public void clear() {
-    employees.clear();
-  }
 
   public List<Employee> getEmployees() {
     return employees;

@@ -18,10 +18,6 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @DeleteMapping("/clear")
-    public void clear(){
-        employeeService.clear();
-    }
 
     @GetMapping
     public List<Employee> getEmployees(@RequestParam(required = false) String gender, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
