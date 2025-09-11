@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.Mapper.EmployeeMapper;
+import com.example.demo.dto.EmployeeRespose;
 import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.repository.IEmployeeRepository;
@@ -8,41 +10,44 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 @Service
 public class EmployeeService {
 
   private final IEmployeeRepository employeeRepository;
+  private final EmployeeMapper employeeMapper;
 
-
-  public EmployeeService(IEmployeeRepository employeeRepository) {
+  public EmployeeService(IEmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
     this.employeeRepository = employeeRepository;
+    this.employeeMapper = employeeMapper;
   }
 
-  public List<Employee> getEmployees(String gender, Integer page, Integer size) {
+  public List<EmployeeRespose> getEmployees(String gender, Integer page, Integer size) {
+    List<Employee> employees;
     if (gender == null) {
       if (page == null || size == null) {
-        return employeeRepository.findAll();
+        employees= employeeRepository.findAll();
       } else {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return employeeRepository.findAll(pageable).toList();
+        employees= employeeRepository.findAll(pageable).toList();
       }
     } else {
       if (page == null || size == null) {
-        return employeeRepository.findEmployeesByGender(gender);
+        employees= employeeRepository.findEmployeesByGender(gender);
 
       } else {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return employeeRepository.findEmployeesByGender(gender, pageable);
+        employees= employeeRepository.findEmployeesByGender(gender, pageable);
       }
     }
+    return employeeMapper.toEmployeeResponses(employees);
   }
 
-  public Employee getEmployeeById(int id) throws ResponseStatusException {
-    return employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
+  public EmployeeRespose getEmployeeById(int id) throws ResponseStatusException {
+    Employee employee = employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
+    return employeeMapper.toEmployeeResponse(employee);
   }
 
-  public Employee createEmployee(Employee employee) throws Exception {
+  public EmployeeRespose createEmployee(Employee employee) throws Exception {
     if (employee.getAge() > 65 || employee.getAge() < 18) {
       throw new Exception("age is invalid");
     }
@@ -50,14 +55,14 @@ public class EmployeeService {
       throw new InvalidDataMessageException("salary is invalid");
     }
     employee.setActive(true);
-    return employeeRepository.save(employee);
+    return employeeMapper.toEmployeeResponse(employeeRepository.save(employee));
   }
 
-  public Employee updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
+  public EmployeeRespose updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
     Employee employee = getEmpolyee(id);
     if (employee.isActive()) {
       updatedEmployee.setId(id);
-      return employeeRepository.save(updatedEmployee);
+      return employeeMapper.toEmployeeResponse(employeeRepository.save(employee));
     }
     throw new InvalidDataMessageException("Employee is not active with id: " + id);
 

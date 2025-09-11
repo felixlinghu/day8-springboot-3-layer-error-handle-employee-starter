@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.example.demo.Mapper.EmployeeMapper;
+import com.example.demo.dto.EmployeeRespose;
 import com.example.demo.entity.Employee;
 import com.example.demo.repository.IEmployeeRepository;
 import java.util.Optional;
@@ -21,6 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
 
+  @Mock
+  private EmployeeMapper employeeMapper;
   @Mock
   private IEmployeeRepository employeeRepository;
   @InjectMocks
@@ -77,7 +81,7 @@ class EmployeeServiceTest {
   void should_return_active_false_when_delete() throws Exception {
     //given
     Employee employee = new Employee("Tom", 20, null, 2000.0);
-employee.setId(1);
+    employee.setId(1);
     when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
     //when
     employeeService.deleteEmployeeById(employee.getId());
@@ -95,12 +99,12 @@ employee.setId(1);
     Optional<Employee> employee1 = Optional.of(employee);
     when(employeeRepository.findById(1)).thenReturn(employee1);
     //when
-    try{
-    Employee updateEmployee = employeeService.updateEmployeeById(employee.getId(), employee);
-    fail();
+    try {
+      EmployeeRespose updateEmployee = employeeService.updateEmployeeById(employee.getId(), employee);
+      fail();
     }
     //then
-    catch (Exception e){
+    catch (Exception e) {
       verify(employeeRepository, never()).save(employee);
     }
 
