@@ -14,7 +14,8 @@ public class EmployeeMapper {
     BeanUtils.copyProperties(employee, employeeRespose);
     return employeeRespose;
   }
-  public List<EmployeeResponse> toEmployeeResponses(List<Employee> employees){
+
+  public List<EmployeeResponse> toEmployeeResponses(List<Employee> employees) {
     return employees.stream().map(this::toEmployeeResponse).toList();
   }
 }

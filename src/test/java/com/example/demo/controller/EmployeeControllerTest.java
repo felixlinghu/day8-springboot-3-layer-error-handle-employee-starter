@@ -27,14 +27,16 @@ public class EmployeeControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
-@Autowired
-private JdbcTemplate jdbcTemplate;
-@BeforeEach
-public void setUp(){
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+
+  @BeforeEach
+  public void setUp() {
 //  jdbcTemplate.execute("truncate table employee");
-  jdbcTemplate.execute("delete from employee;");
-  jdbcTemplate.execute("ALTER TABLE employee AUTO_INCREMENT=1");
-}
+    jdbcTemplate.execute("delete from employee;");
+    jdbcTemplate.execute("ALTER TABLE employee AUTO_INCREMENT=1");
+  }
+
   @Test
   void should_return_400_when_employee_not_found() throws Exception {
     mockMvc.perform(get("/employees/999")
@@ -55,13 +57,13 @@ public void setUp(){
   private void createEmployee(String name) throws Exception {
     Gson gson = new Gson();
     if (Objects.equals(name, "Jane Doe")) {
-      String employee1 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0)).toString();
+      String employee1 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0));
       mockMvc.perform(post("/employees")
           .contentType(MediaType.APPLICATION_JSON)
           .content(employee1));
       return;
     }
-    String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0)).toString();
+    String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0));
     mockMvc.perform(post("/employees")
         .contentType(MediaType.APPLICATION_JSON)
         .content(employee1));
@@ -71,7 +73,7 @@ public void setUp(){
   void should_return_employee_when_employee_found() throws Exception {
     Gson gson = new Gson();
     Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
-    String employee1 = gson.toJson(expect).toString();
+    String employee1 = gson.toJson(expect);
     ResultActions actions = mockMvc.perform(post("/employees")
         .contentType(MediaType.APPLICATION_JSON)
         .content(employee1));
@@ -88,7 +90,7 @@ public void setUp(){
   void should_return_male_employee_when_employee_found() throws Exception {
     Gson gson = new Gson();
     Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
-    String employee1 = gson.toJson(expect).toString();
+    String employee1 = gson.toJson(expect);
     ResultActions actions = mockMvc.perform(post("/employees")
         .contentType(MediaType.APPLICATION_JSON)
         .content(employee1));
@@ -138,7 +140,7 @@ public void setUp(){
   void should_return_200_with_employee_list() throws Exception {
     Gson gson = new Gson();
     Employee expect = new Employee("John Smith", 28, "MALE", 60000.0);
-    String employee1 = gson.toJson(expect).toString();
+    String employee1 = gson.toJson(expect);
     ResultActions actions = mockMvc.perform(post("/employees")
         .contentType(MediaType.APPLICATION_JSON)
         .content(employee1));

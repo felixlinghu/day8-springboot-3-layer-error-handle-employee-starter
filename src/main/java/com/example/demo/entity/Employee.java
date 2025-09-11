@@ -17,20 +17,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-    private Integer age;
-    private String gender;
-    private Double salary;
-    private boolean active=true;
-    @Column
-    private Integer companyId;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
+  private String name;
+  private Integer age;
+  private String gender;
+  private Double salary;
+  private boolean active = true;
+  @Column
+  private Integer companyId;
+
   public Employee(String name, Integer age, String gender, Double salary) {
-        this.name = name;
-        this.age = age;
-        this.gender = gender;
-        this.salary = salary;
-    }
+    this.name = name;
+    this.age = age;
+    this.gender = gender;
+    this.salary = salary;
+  }
 }

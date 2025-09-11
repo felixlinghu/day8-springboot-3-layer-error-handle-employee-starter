@@ -7,9 +7,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class EmployeeRepository {
+
   private final List<Employee> employees = new ArrayList<>();
 
-  public  Employee getEmployeeById(int id) {
+  public Employee getEmployeeById(int id) {
     return employees.stream()
         .filter(employee -> employee.getId() == id)
         .findFirst().orElse(null);
@@ -36,6 +37,6 @@ public class EmployeeRepository {
   }
 
   public void deleteEmployeeById(int id) {
-    employees.removeIf(employee -> employee.getId()==id);
+    employees.removeIf(employee -> employee.getId() == id);
   }
 }

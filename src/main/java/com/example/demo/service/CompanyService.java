@@ -14,8 +14,9 @@ import org.springframework.stereotype.Service;
 public class CompanyService {
 
   private final CompanyRepositoryimpl companyRepository;
-private final CompanyMapper companyMapper;
-  public CompanyService(CompanyRepositoryimpl companyRepository,  CompanyMapper companyMapper) {
+  private final CompanyMapper companyMapper;
+
+  public CompanyService(CompanyRepositoryimpl companyRepository, CompanyMapper companyMapper) {
     this.companyRepository = companyRepository;
     this.companyMapper = companyMapper;
   }

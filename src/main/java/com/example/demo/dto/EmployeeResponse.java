@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeResponse {
+
   private Integer id;
   private String name;
   private Integer age;
   private String gender;
   private Double salary;
-  private boolean active=true;
+  private boolean active = true;
   private Integer companyId;
 
 }

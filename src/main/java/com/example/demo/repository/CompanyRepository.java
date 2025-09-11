@@ -3,7 +3,6 @@ package com.example.demo.repository;
 import com.example.demo.entity.Company;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 @Repository

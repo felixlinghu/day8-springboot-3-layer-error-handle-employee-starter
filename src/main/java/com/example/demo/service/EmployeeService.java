@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 @Service
 public class EmployeeService {
 
@@ -25,18 +26,18 @@ public class EmployeeService {
     List<Employee> employees;
     if (gender == null) {
       if (page == null || size == null) {
-        employees= employeeRepository.findAll();
+        employees = employeeRepository.findAll();
       } else {
         Pageable pageable = PageRequest.of(page - 1, size);
-        employees= employeeRepository.findAll(pageable).toList();
+        employees = employeeRepository.findAll(pageable).toList();
       }
     } else {
       if (page == null || size == null) {
-        employees= employeeRepository.findEmployeesByGender(gender);
+        employees = employeeRepository.findEmployeesByGender(gender);
 
       } else {
         Pageable pageable = PageRequest.of(page - 1, size);
-        employees= employeeRepository.findEmployeesByGender(gender, pageable);
+        employees = employeeRepository.findEmployeesByGender(gender, pageable);
       }
     }
     return employeeMapper.toEmployeeResponses(employees);
@@ -74,6 +75,7 @@ public class EmployeeService {
     employee.setId(id);
     employeeRepository.save(employee);
   }
+
   private Employee getEmpolyee(int id) {
     return employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
   }
