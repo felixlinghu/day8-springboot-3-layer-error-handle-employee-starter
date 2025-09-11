@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.CompanyResponse;
 import com.example.demo.entity.Company;
 import com.example.demo.exception.InvalidCompanyIdException;
 import com.example.demo.service.CompanyService;
@@ -29,26 +30,26 @@ public class CompanyController {
 
 
   @GetMapping
-  public List<Company> getCompanies(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+  public List<CompanyResponse> getCompanies(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
     return companyService.getCompanies(page, size);
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Company createCompany(@RequestBody Company company) {
+  public CompanyResponse createCompany(@RequestBody Company company) {
     return companyService.create(company);
 
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Company updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidCompanyIdException {
+  public CompanyResponse updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidCompanyIdException {
     return companyService.updateCompany(id, updatedCompany);
   }
 
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Company getCompanyById(@PathVariable int id) throws InvalidCompanyIdException {
+  public CompanyResponse getCompanyById(@PathVariable int id) throws InvalidCompanyIdException {
     return companyService.getCompanyById(id);
   }
 
