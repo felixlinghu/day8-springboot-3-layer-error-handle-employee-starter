@@ -63,7 +63,7 @@ public class EmployeeService {
     Employee employee = getEmpolyee(id);
     if (employee.isActive()) {
       updatedEmployee.setId(id);
-      return employeeMapper.toEmployeeResponse(employeeRepository.save(employee));
+      return employeeMapper.toEmployeeResponse(employeeRepository.save(updatedEmployee));
     }
     throw new InvalidDataMessageException("Employee is not active with id: " + id);
 
