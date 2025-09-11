@@ -20,6 +20,7 @@ public class EmployeeRequest {
   private Double salary;
   private boolean active = true;
   private Integer companyId;
+
   public EmployeeRequest(String name, Integer age, String gender, Double salary) {
     this.name = name;
     this.age = age;

@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class EmployeeService {
 
   private final IEmployeeRepository employeeRepository;
-  private final EmployeeMapper employeeMapper=new EmployeeMapper();
+  private final EmployeeMapper employeeMapper = new EmployeeMapper();
 
   public EmployeeService(IEmployeeRepository employeeRepository) {
     this.employeeRepository = employeeRepository;
@@ -49,7 +49,7 @@ public class EmployeeService {
   }
 
   public EmployeeResponse createEmployee(EmployeeRequest employeeRequest) throws Exception {
-    Employee employee= employeeMapper.toEmployeeEntity(employeeRequest);
+    Employee employee = employeeMapper.toEmployeeEntity(employeeRequest);
     if (employee.getAge() > 65 || employee.getAge() < 18) {
       throw new Exception("age is invalid");
     }

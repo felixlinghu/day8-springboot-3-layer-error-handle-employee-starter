@@ -95,7 +95,7 @@ class EmployeeServiceTest {
     EmployeeRequest employee = new EmployeeRequest("Tom", 80, null, null);
     employee.setActive(false);
     employee.setId(1);
-    Optional<Employee> employee1 = Optional.of( new EmployeeMapper().toEmployeeEntity(employee));
+    Optional<Employee> employee1 = Optional.of(new EmployeeMapper().toEmployeeEntity(employee));
     when(employeeRepository.findById(1)).thenReturn(employee1);
     //when
     try {
