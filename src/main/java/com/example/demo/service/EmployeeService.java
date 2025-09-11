@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class EmployeeService {
 
-private final IEmployeeRepository employeeRepository;
+  private final IEmployeeRepository employeeRepository;
 
   public void clear() {
     employeeRepository.flush();
@@ -35,23 +35,19 @@ private final IEmployeeRepository employeeRepository;
         Pageable pageable = PageRequest.of(page - 1, size);
         return employeeRepository.findAll(pageable).toList();
       }
-    }else{
+    } else {
       if (page == null || size == null) {
         return employeeRepository.findEmployeesByGender(gender);
 
-      }else {
+      } else {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return employeeRepository.findEmployeesByGender(gender,pageable);
+        return employeeRepository.findEmployeesByGender(gender, pageable);
       }
     }
   }
 
   public Employee getEmployeeById(int id) throws ResponseStatusException {
-    Employee employee = employeeRepository.getReferenceById(id);
-    if (employee == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
-    }
-    return employee;
+    return employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
   }
 
   public Employee createEmployee(Employee employee) throws Exception {
@@ -59,29 +55,26 @@ private final IEmployeeRepository employeeRepository;
       throw new Exception("age is invalid");
     }
     if (employee.getAge() > 30 && (employee.getSalary() == null || employee.getSalary() < 20000)) {
-//      throw new RuntimeException("salary is invalid");
-      throw new InvalidDataMessageException( "salary is invalid" );
+      throw new InvalidDataMessageException("salary is invalid");
     }
     employee.setActive(true);
     return employeeRepository.save(employee);
   }
 
   public Employee updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
-    Employee employee = employeeRepository.findById(id).orElseThrow(()->new InvalidDataMessageException( "Employee not found with id: " + id));
+    Employee employee = employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
     if (employee.isActive()) {
-      employeeRepository.getReferenceById()
-      return employeeRepository.updateEmployeeById(id, updatedEmployee);
+      updatedEmployee.setId(id);
+      return employeeRepository.save(updatedEmployee);
     }
-    throw new InvalidDataMessageException( "Employee not found with id: " + id);
+    throw new InvalidDataMessageException("Employee is not active with id: " + id);
 
   }
 
   public void deleteEmployeeById(int id) throws InvalidDataMessageException {
-    Employee employee = employeeRepository.getEmployeeById(id);
-    if (employee == null) {
-      throw new InvalidDataMessageException( "Employee not found with id: " + id);
-    }
+    Employee employee = employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
     employee.setActive(false);
-    employeeRepository.updateEmployeeById(employee.getId(),employee);
+    employee.setId(id);
+    employeeRepository.save(employee);
   }
 }
