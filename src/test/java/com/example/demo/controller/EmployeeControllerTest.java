@@ -52,20 +52,19 @@ public void setUp(){
         .andExpect(jsonPath("$.length()").value(2));
   }
 
-  private Gson createEmployee(String name) throws Exception {
+  private void createEmployee(String name) throws Exception {
     Gson gson = new Gson();
     if (Objects.equals(name, "Jane Doe")) {
       String employee1 = gson.toJson(new Employee("Jane Doe", 22, "FEMALE", 60000.0)).toString();
       mockMvc.perform(post("/employees")
           .contentType(MediaType.APPLICATION_JSON)
           .content(employee1));
-      return gson;
+      return;
     }
     String employee1 = gson.toJson(new Employee("John Smith", 28, "MALE", 60000.0)).toString();
     mockMvc.perform(post("/employees")
         .contentType(MediaType.APPLICATION_JSON)
         .content(employee1));
-    return gson;
   }
 
   @Test

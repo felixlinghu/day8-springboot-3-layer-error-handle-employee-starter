@@ -2,30 +2,23 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Company;
 import com.example.demo.exception.InvalidCompanyIdException;
-import com.example.demo.exception.InvalidDataMessageException;
-import com.example.demo.repository.CompanyRepository;
+import com.example.demo.repository.CompanyRepositoryimpl;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CompanyService {
 
-  private final CompanyRepository companyRepository;
+  private final CompanyRepositoryimpl companyRepository;
 
-  public CompanyService(CompanyRepository companyRepository) {
+  public CompanyService(CompanyRepositoryimpl companyRepository) {
     this.companyRepository = companyRepository;
   }
 
-  public void clear() {
-    companyRepository.clear();
-  }
 
   public List<Company> getCompanies(Integer page, Integer size) {
-    List<Company> companies = companyRepository.getAllCompanies();
+    List<Company> companies = companyRepository.findAll();
     if (page != null && size != null) {
       int start = (page - 1) * size;
       int end = Math.min(start + size, companies.size());
@@ -38,19 +31,20 @@ public class CompanyService {
   }
 
   public Company create(Company company) {
-    return companyRepository.createCompany(company);
+    return companyRepository.save(company);
   }
 
   public Company updateCompany(int id, Company updatedCompany) throws InvalidCompanyIdException {
-    Company found = companyRepository.getCompanyById(id);
+    Company found = companyRepository.findById(id).orElse(null);
     if (found == null) {
       throw new InvalidCompanyIdException("Company not found with id: " + id);
     }
-    return companyRepository.updateCompany(found, updatedCompany);
+    updatedCompany.setId(id);
+    return companyRepository.save(updatedCompany);
   }
 
   public Company getCompanyById(int id) throws InvalidCompanyIdException {
-    Company found = companyRepository.getCompanyById(id);
+    Company found = companyRepository.findById(id).orElse(null);
     if (found == null) {
       throw new InvalidCompanyIdException("Company not found with id: " + id);
     }
@@ -58,10 +52,10 @@ public class CompanyService {
   }
 
   public void deleteCompany(int id) throws InvalidCompanyIdException {
-    Company found = companyRepository.getCompanyById(id);
+    Company found = companyRepository.findById(id).orElse(null);
     if (found == null) {
       throw new InvalidCompanyIdException("Company not found with id: " + id);
     }
-    companyRepository.deleteCompany(found);
+    companyRepository.delete(found);
   }
 }
