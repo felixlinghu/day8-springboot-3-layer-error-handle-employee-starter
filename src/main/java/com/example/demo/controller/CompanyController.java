@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.Mapper.CompanyMapper;
+import com.example.demo.dto.CompanyRequest;
 import com.example.demo.dto.CompanyResponse;
 import com.example.demo.entity.Company;
 import com.example.demo.exception.InvalidCompanyIdException;
@@ -22,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
   private final CompanyService companyService;
+  private final CompanyMapper companyMapper;
 
-
-  public CompanyController(CompanyService companyService) {
+  public CompanyController(CompanyService companyService, CompanyMapper companyMapper) {
     this.companyService = companyService;
+      this.companyMapper = companyMapper;
   }
 
 
@@ -37,14 +40,14 @@ public class CompanyController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public CompanyResponse createCompany(@RequestBody Company company) {
-    return companyService.create(company);
+    return companyService.create(companyMapper.toCompanyEntity(company));
 
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public CompanyResponse updateCompany(@PathVariable int id, @RequestBody Company updatedCompany) throws InvalidCompanyIdException {
-    return companyService.updateCompany(id, updatedCompany);
+  public CompanyResponse updateCompany(@PathVariable int id, @RequestBody CompanyRequest updatedCompany) throws InvalidCompanyIdException {
+    return companyService.updateCompany(id, companyMapper.toCompanyEntity(updatedCompany));
   }
 
   @GetMapping("/{id}")
