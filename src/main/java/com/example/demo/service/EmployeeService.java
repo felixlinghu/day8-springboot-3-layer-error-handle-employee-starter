@@ -2,15 +2,10 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
-import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.IEmployeeRepository;
 import java.util.List;
-import java.util.stream.Stream;
-import jdk.jfr.DataAmount;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -62,7 +57,7 @@ public class EmployeeService {
   }
 
   public Employee updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
-    Employee employee = employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
+    Employee employee = getEmpolyee(id);
     if (employee.isActive()) {
       updatedEmployee.setId(id);
       return employeeRepository.save(updatedEmployee);
@@ -72,9 +67,12 @@ public class EmployeeService {
   }
 
   public void deleteEmployeeById(int id) throws InvalidDataMessageException {
-    Employee employee = employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
+    Employee employee = getEmpolyee(id);
     employee.setActive(false);
     employee.setId(id);
     employeeRepository.save(employee);
+  }
+  private Employee getEmpolyee(int id) {
+    return employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
   }
 }
