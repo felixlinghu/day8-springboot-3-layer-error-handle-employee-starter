@@ -16,12 +16,12 @@ public class GlobalExceptionHandler {
   }
   @ExceptionHandler(InvalidDataMessageException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ResponseException invalidDataExceptionHandler(Exception exception) {
+  public ResponseException invalidDataExceptionHandler(RuntimeException exception) {
     return new ResponseException(exception.getMessage());
   }
   @ExceptionHandler(InvalidCompanyIdException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ResponseException InvalidCompanyIdExceptionHandler(Exception exception) {
+  public ResponseException InvalidCompanyIdExceptionHandler(RuntimeException exception) {
     return new ResponseException(exception.getMessage());
   }
 }

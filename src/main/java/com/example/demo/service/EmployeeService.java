@@ -3,10 +3,13 @@ package com.example.demo.service;
 import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.repository.IEmployeeRepository;
 import java.util.List;
 import java.util.stream.Stream;
 import jdk.jfr.DataAmount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,29 +17,37 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class EmployeeService {
 
-  private final EmployeeRepository employeeRepository;
+private final IEmployeeRepository employeeRepository;
 
   public void clear() {
-    employeeRepository.clear();
+    employeeRepository.flush();
   }
 
-  public EmployeeService(EmployeeRepository employeeRepository) {
+  public EmployeeService(IEmployeeRepository employeeRepository) {
     this.employeeRepository = employeeRepository;
   }
 
   public List<Employee> getEmployees(String gender, Integer page, Integer size) {
-    Stream<Employee> stream = employeeRepository.getEmployees().stream();
-    if (gender != null) {
-      stream = stream.filter(employee -> employee.getGender().compareToIgnoreCase(gender) == 0);
+    if (gender == null) {
+      if (page == null || size == null) {
+        return employeeRepository.findAll();
+      } else {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return employeeRepository.findAll(pageable).toList();
+      }
+    }else{
+      if (page == null || size == null) {
+        return employeeRepository.findEmployeesByGender(gender);
+
+      }else {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return employeeRepository.findEmployeesByGender(gender,pageable);
+      }
     }
-    if (page != null && size != null) {
-      stream = stream.skip((long) (page - 1) * size).limit(size);
-    }
-    return stream.toList();
   }
 
   public Employee getEmployeeById(int id) throws ResponseStatusException {
-    Employee employee = employeeRepository.getEmployeeById(id);
+    Employee employee = employeeRepository.getReferenceById(id);
     if (employee == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found with id: " + id);
     }
@@ -52,15 +63,13 @@ public class EmployeeService {
       throw new InvalidDataMessageException( "salary is invalid" );
     }
     employee.setActive(true);
-    return employeeRepository.create(employee);
+    return employeeRepository.save(employee);
   }
 
   public Employee updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
-    Employee employee = employeeRepository.getEmployeeById(id);
-    if (employee == null) {
-      throw new InvalidDataMessageException( "Employee not found with id: " + id);
-    }
+    Employee employee = employeeRepository.findById(id).orElseThrow(()->new InvalidDataMessageException( "Employee not found with id: " + id));
     if (employee.isActive()) {
+      employeeRepository.getReferenceById()
       return employeeRepository.updateEmployeeById(id, updatedEmployee);
     }
     throw new InvalidDataMessageException( "Employee not found with id: " + id);
