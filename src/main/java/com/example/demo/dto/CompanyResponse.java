@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.Employee;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeRespose {
+public class CompanyResponse {
   private Integer id;
   private String name;
-  private Integer age;
-  private String gender;
-  private Double salary;
-  private boolean active=true;
-  private Integer companyId;
+  private List<Employee> employees;
 
 }

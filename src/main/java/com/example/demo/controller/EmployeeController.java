@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.EmployeeRespose;
+import com.example.demo.dto.EmployeeResponse;
 import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.service.EmployeeService;
@@ -21,24 +21,24 @@ public class EmployeeController {
 
 
     @GetMapping
-    public List<EmployeeRespose> getEmployees(@RequestParam(required = false) String gender, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+    public List<EmployeeResponse> getEmployees(@RequestParam(required = false) String gender, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
         return employeeService.getEmployees(gender,page,size);
     }
 
     @GetMapping("/{id}")
-    public EmployeeRespose getEmployeeById(@PathVariable int id) {
+    public EmployeeResponse getEmployeeById(@PathVariable int id) {
         return employeeService.getEmployeeById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EmployeeRespose createEmployee(@RequestBody Employee employee) throws Exception {
+    public EmployeeResponse createEmployee(@RequestBody Employee employee) throws Exception {
        return employeeService.createEmployee(employee);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public EmployeeRespose updateEmployee(@PathVariable int id, @RequestBody Employee updatedEmployee) throws InvalidDataMessageException {
+    public EmployeeResponse updateEmployee(@PathVariable int id, @RequestBody Employee updatedEmployee) throws InvalidDataMessageException {
        return employeeService.updateEmployeeById(id, updatedEmployee);
     }
 

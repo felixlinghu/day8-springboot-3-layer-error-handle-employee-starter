@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.Mapper.EmployeeMapper;
-import com.example.demo.dto.EmployeeRespose;
+import com.example.demo.dto.EmployeeResponse;
 import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.repository.IEmployeeRepository;
@@ -21,7 +21,7 @@ public class EmployeeService {
     this.employeeMapper = employeeMapper;
   }
 
-  public List<EmployeeRespose> getEmployees(String gender, Integer page, Integer size) {
+  public List<EmployeeResponse> getEmployees(String gender, Integer page, Integer size) {
     List<Employee> employees;
     if (gender == null) {
       if (page == null || size == null) {
@@ -42,12 +42,12 @@ public class EmployeeService {
     return employeeMapper.toEmployeeResponses(employees);
   }
 
-  public EmployeeRespose getEmployeeById(int id) throws ResponseStatusException {
+  public EmployeeResponse getEmployeeById(int id) throws ResponseStatusException {
     Employee employee = employeeRepository.findById(id).orElseThrow(() -> new InvalidDataMessageException("Employee not found with id: " + id));
     return employeeMapper.toEmployeeResponse(employee);
   }
 
-  public EmployeeRespose createEmployee(Employee employee) throws Exception {
+  public EmployeeResponse createEmployee(Employee employee) throws Exception {
     if (employee.getAge() > 65 || employee.getAge() < 18) {
       throw new Exception("age is invalid");
     }
@@ -58,7 +58,7 @@ public class EmployeeService {
     return employeeMapper.toEmployeeResponse(employeeRepository.save(employee));
   }
 
-  public EmployeeRespose updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
+  public EmployeeResponse updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
     Employee employee = getEmpolyee(id);
     if (employee.isActive()) {
       updatedEmployee.setId(id);

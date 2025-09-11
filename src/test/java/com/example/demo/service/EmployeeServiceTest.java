@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.Mapper.EmployeeMapper;
-import com.example.demo.dto.EmployeeRespose;
+import com.example.demo.dto.EmployeeResponse;
 import com.example.demo.entity.Employee;
 import com.example.demo.repository.IEmployeeRepository;
 import java.util.Optional;
@@ -100,7 +100,7 @@ class EmployeeServiceTest {
     when(employeeRepository.findById(1)).thenReturn(employee1);
     //when
     try {
-      EmployeeRespose updateEmployee = employeeService.updateEmployeeById(employee.getId(), employee);
+      EmployeeResponse updateEmployee = employeeService.updateEmployeeById(employee.getId(), employee);
       fail();
     }
     //then
