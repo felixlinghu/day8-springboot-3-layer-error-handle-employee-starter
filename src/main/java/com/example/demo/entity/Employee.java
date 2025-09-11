@@ -6,8 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,11 +22,10 @@ public class Employee {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
   private String name;
-  @NotNull(message = "Age cannot be null")
+
   private Integer age;
   private String gender;
-  @NotNull(message = "Gender cannot be null")
-  @Min(value = 0, message = "Salary must be positive number")
+
   private Double salary;
   private boolean active = true;
   @Column

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.Mapper.EmployeeMapper;
+import com.example.demo.dto.EmployeeRequest;
 import com.example.demo.dto.EmployeeResponse;
 import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
@@ -15,11 +16,10 @@ import org.springframework.web.server.ResponseStatusException;
 public class EmployeeService {
 
   private final IEmployeeRepository employeeRepository;
-  private final EmployeeMapper employeeMapper;
+  private final EmployeeMapper employeeMapper=new EmployeeMapper();
 
-  public EmployeeService(IEmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
+  public EmployeeService(IEmployeeRepository employeeRepository) {
     this.employeeRepository = employeeRepository;
-    this.employeeMapper = employeeMapper;
   }
 
   public List<EmployeeResponse> getEmployees(String gender, Integer page, Integer size) {
@@ -48,7 +48,8 @@ public class EmployeeService {
     return employeeMapper.toEmployeeResponse(employee);
   }
 
-  public EmployeeResponse createEmployee(Employee employee) throws Exception {
+  public EmployeeResponse createEmployee(EmployeeRequest employeeRequest) throws Exception {
+    Employee employee= employeeMapper.toEmployeeEntity(employeeRequest);
     if (employee.getAge() > 65 || employee.getAge() < 18) {
       throw new Exception("age is invalid");
     }
@@ -59,7 +60,8 @@ public class EmployeeService {
     return employeeMapper.toEmployeeResponse(employeeRepository.save(employee));
   }
 
-  public EmployeeResponse updateEmployeeById(int id, Employee updatedEmployee) throws InvalidDataMessageException {
+  public EmployeeResponse updateEmployeeById(int id, EmployeeRequest updatedEmployeeRequest) throws InvalidDataMessageException {
+    Employee updatedEmployee = employeeMapper.toEmployeeEntity(updatedEmployeeRequest);
     Employee employee = getEmpolyee(id);
     if (employee.isActive()) {
       updatedEmployee.setId(id);

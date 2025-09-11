@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.EmployeeRequest;
 import com.example.demo.dto.EmployeeResponse;
-import com.example.demo.entity.Employee;
 import com.example.demo.exception.InvalidDataMessageException;
 import com.example.demo.service.EmployeeService;
 import java.util.List;
@@ -42,13 +42,13 @@ public class EmployeeController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public EmployeeResponse createEmployee(@RequestBody @Validated Employee employee) throws Exception {
+  public EmployeeResponse createEmployee(@RequestBody @Validated EmployeeRequest employee) throws Exception {
     return employeeService.createEmployee(employee);
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public EmployeeResponse updateEmployee(@PathVariable int id, @RequestBody @Validated Employee updatedEmployee) throws InvalidDataMessageException {
+  public EmployeeResponse updateEmployee(@PathVariable int id, @RequestBody @Validated EmployeeRequest updatedEmployee) throws InvalidDataMessageException {
     return employeeService.updateEmployeeById(id, updatedEmployee);
   }
 
