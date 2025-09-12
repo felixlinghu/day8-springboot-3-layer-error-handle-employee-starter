@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.Mapper.CompanyMapper;
 import com.example.demo.dto.CompanyRequest;
 import com.example.demo.dto.CompanyResponse;
-import com.example.demo.entity.Company;
 import com.example.demo.exception.InvalidCompanyIdException;
 import com.example.demo.service.CompanyService;
 import java.util.List;
@@ -39,7 +38,7 @@ public class CompanyController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public CompanyResponse createCompany(@RequestBody Company company) {
+  public CompanyResponse createCompany(@RequestBody CompanyRequest company) {
     return companyService.create(companyMapper.toCompanyEntity(company));
 
   }

@@ -1,8 +1,10 @@
 package com.example.demo.dto;
 
 import com.example.demo.entity.Employee;
-
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 作用:
